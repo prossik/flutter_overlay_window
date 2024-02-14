@@ -116,7 +116,11 @@ public class OverlayService extends Service implements View.OnTouchListener {
         if(engine==null) {
             Log.d("OverLay", "new FlutterEngine(this) == null");
         }
+        Log.d("OverLay", "engine:" + engine);
         engine.getLifecycleChannel().appIsResumed();
+        Log.d("OverLay", "engine.getLifecycleChannel():" + engine.getLifecycleChannel());
+        Log.d("OverLay", "engine.getLifecycleChannel().appIsResumed()" + engine.getLifecycleChannel().appIsResumed());
+
         flutterChannel = new MethodChannel(FlutterEngineCache.getInstance().get(OverlayConstants.CACHED_TAG).getDartExecutor(), OverlayConstants.OVERLAY_TAG);
         overlayMessageChannel = new BasicMessageChannel(FlutterEngineCache.getInstance().get(OverlayConstants.CACHED_TAG).getDartExecutor(), OverlayConstants.MESSENGER_TAG, JSONMessageCodec.INSTANCE);
         flutterView = new FlutterView(getApplicationContext(), new FlutterTextureView(getApplicationContext()));
