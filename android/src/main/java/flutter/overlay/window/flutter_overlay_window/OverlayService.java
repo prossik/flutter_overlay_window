@@ -109,6 +109,7 @@ public class OverlayService extends Service implements View.OnTouchListener {
         isRunning = true;
         Log.d("OverLay", "Service started");
         Log.d("OverLay", "FlutterEngineCache.getInstance()" + FlutterEngineCache.getInstance());
+        Log.d("OverLay", "OverlayConstants.CACHED_TAG" + OverlayConstants.CACHED_TAG);
 
         FlutterEngine engine = FlutterEngineCache.getInstance().get(OverlayConstants.CACHED_TAG);
         if(engine == null) {
