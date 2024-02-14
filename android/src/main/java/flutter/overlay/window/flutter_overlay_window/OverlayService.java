@@ -133,12 +133,17 @@ public class OverlayService extends Service implements View.OnTouchListener {
             WindowSetup.messenger.send(message);
         });
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-    }catch(Exception e) {
-        Log.d("OverLay", "StackTrace:" + e.printStackTrace());
-        Log.d("OverLay", "GetMessage:" + e.getMessage());
+     } catch (Exception ex) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            ex.printStackTrace(pw);
+            String stackTraceString = sw.toString();
+            Log.d("OverLay", "GetMessage:" + ex.getMessage());
+            Log.d("OverLay", "stackTraceString:" + stackTraceString);
 
-    }
 
+        }
+  
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             windowManager.getDefaultDisplay().getSize(szWindow);
         } else {
