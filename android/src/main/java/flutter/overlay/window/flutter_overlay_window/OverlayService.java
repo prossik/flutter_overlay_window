@@ -109,7 +109,7 @@ public class OverlayService extends Service implements View.OnTouchListener {
             stopSelf();
         }
         isRunning = true;
-        Log.d("onStartCommand", "Service started");
+        Log.d("OverLay", "Service started");
         FlutterEngine engine = FlutterEngineCache.getInstance().get(OverlayConstants.CACHED_TAG);
         engine.getLifecycleChannel().appIsResumed();
         flutterChannel = new MethodChannel(FlutterEngineCache.getInstance().get(OverlayConstants.CACHED_TAG).getDartExecutor(), OverlayConstants.OVERLAY_TAG);
