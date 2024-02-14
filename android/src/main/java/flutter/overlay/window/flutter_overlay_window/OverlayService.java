@@ -87,9 +87,7 @@ public class OverlayService extends Service implements View.OnTouchListener {
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        try {
-
-        
+    
         mResources = getApplicationContext().getResources();
         boolean isCloseWindow = intent.getBooleanExtra(INTENT_EXTRA_IS_CLOSE_WINDOW, false);
         if (isCloseWindow) {
@@ -163,16 +161,7 @@ public class OverlayService extends Service implements View.OnTouchListener {
         params.gravity = WindowSetup.gravity;
         flutterView.setOnTouchListener(this);
         windowManager.addView(flutterView, params);
-    } catch (Exception ex) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            ex.printStackTrace(pw);
-            String stackTraceString = sw.toString();
-            Log.d("OverLay", "GetMessage:" + ex.getMessage());
-            Log.d("OverLay", "stackTraceString:" + stackTraceString);
 
-
-        }
         return START_STICKY;
     }
 

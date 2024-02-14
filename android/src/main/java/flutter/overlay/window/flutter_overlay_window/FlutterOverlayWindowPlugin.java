@@ -43,6 +43,7 @@ public class FlutterOverlayWindowPlugin implements
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
+        try {
         this.context = flutterPluginBinding.getApplicationContext();
         channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), OverlayConstants.CHANNEL_TAG);
         channel.setMethodCallHandler(this);
@@ -53,6 +54,16 @@ public class FlutterOverlayWindowPlugin implements
 
         WindowSetup.messenger = messenger;
         WindowSetup.messenger.setMessageHandler(this);
+    } catch (Exception ex) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        ex.printStackTrace(pw);
+        String stackTraceString = sw.toString();
+        Log.d("OverLay", "onAttachedToEngine GetMessage:" + ex.getMessage());
+        Log.d("OverLay", "onAttachedToEngine stackTraceString:" + stackTraceString);
+
+
+    }
     }
 
     @Override
@@ -69,6 +80,7 @@ public class FlutterOverlayWindowPlugin implements
                 result.success(true);
             }
         } else if (call.method.equals("showOverlay")) {
+            try {
             if (!checkOverlayPermission()) {
                 result.error("PERMISSION", "overlay permission is not enabled", null);
                 return;
@@ -98,6 +110,16 @@ public class FlutterOverlayWindowPlugin implements
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             context.startService(intent);
             result.success(null);
+        }catch (Exception ex) {
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                ex.printStackTrace(pw);
+                String stackTraceString = sw.toString();
+                Log.d("OverLay", "showOverlay GetMessage:" + ex.getMessage());
+                Log.d("OverLay", "showOverlay stackTraceString:" + stackTraceString);
+        
+        
+            }
         } else if (call.method.equals("isOverlayActive")) {
             result.success(OverlayService.isRunning);
             return;
@@ -119,10 +141,14 @@ public class FlutterOverlayWindowPlugin implements
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
         channel.setMethodCallHandler(null);
         WindowSetup.messenger.setMessageHandler(null);
+        Log.d("OverLay", "onDetachedFromEngine run()");
+
     }
 
     @Override
     public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
+        try {
+            Log.d("OverLay", "onAttachedToActivity run:binding.getActivity()" + binding.getActivity());
         mActivity = binding.getActivity();
         FlutterEngineGroup enn = new FlutterEngineGroup(context);
         DartExecutor.DartEntrypoint dEntry = new DartExecutor.DartEntrypoint(
@@ -131,19 +157,30 @@ public class FlutterOverlayWindowPlugin implements
         FlutterEngine engine = enn.createAndRunEngine(context, dEntry);
         FlutterEngineCache.getInstance().put(OverlayConstants.CACHED_TAG, engine);
         binding.addActivityResultListener(this);
+        } catch (Exception ex) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            ex.printStackTrace(pw);
+            String stackTraceString = sw.toString();
+            Log.d("OverLay", "onAttachedToActivity GetMessage:" + ex.getMessage());
+            Log.d("OverLay", "onAttachedToActivity stackTraceString:" + stackTraceString);
+        }
     }
 
     @Override
     public void onDetachedFromActivityForConfigChanges() {
+        Log.d("OverLay", "onDetachedFromActivityForConfigChanges run()");
     }
 
     @Override
     public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
+        Log.d("OverLay", "onReattachedToActivityForConfigChanges run:binding.getActivity()" + binding.getActivity());
         this.mActivity = binding.getActivity();
     }
 
     @Override
     public void onDetachedFromActivity() {
+        Log.d("OverLay", "onDetachedFromActivity run()");
     }
 
     @Override
