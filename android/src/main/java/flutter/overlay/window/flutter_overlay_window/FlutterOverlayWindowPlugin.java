@@ -45,6 +45,7 @@ public class FlutterOverlayWindowPlugin implements
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
         try {
+            if(this.context==null) {
         this.context = flutterPluginBinding.getApplicationContext();
         channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), OverlayConstants.CHANNEL_TAG);
         channel.setMethodCallHandler(this);
@@ -55,6 +56,7 @@ public class FlutterOverlayWindowPlugin implements
 
         WindowSetup.messenger = messenger;
         WindowSetup.messenger.setMessageHandler(this);
+            }
     } catch (Exception ex) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
@@ -150,6 +152,7 @@ public class FlutterOverlayWindowPlugin implements
     public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
         try {
             Log.d("OverLay", "onAttachedToActivity run:binding.getActivity()" + binding.getActivity());
+            if(this.context==null) {
         mActivity = binding.getActivity();
         FlutterEngineGroup enn = new FlutterEngineGroup(context);
         DartExecutor.DartEntrypoint dEntry = new DartExecutor.DartEntrypoint(
@@ -158,6 +161,7 @@ public class FlutterOverlayWindowPlugin implements
         FlutterEngine engine = enn.createAndRunEngine(context, dEntry);
         FlutterEngineCache.getInstance().put(OverlayConstants.CACHED_TAG, engine);
         binding.addActivityResultListener(this);
+            }
         } catch (Exception ex) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
@@ -186,11 +190,20 @@ public class FlutterOverlayWindowPlugin implements
 
     @Override
     public void onMessage(@Nullable Object message, @NonNull BasicMessageChannel.Reply reply) {
+        try {
         BasicMessageChannel overlayMessageChannel = new BasicMessageChannel(
                 FlutterEngineCache.getInstance().get(OverlayConstants.CACHED_TAG)
                         .getDartExecutor(),
                 OverlayConstants.MESSENGER_TAG, JSONMessageCodec.INSTANCE);
         overlayMessageChannel.send(message, reply);
+    } catch (Exception ex) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        ex.printStackTrace(pw);
+        String stackTraceString = sw.toString();
+        Log.d("OverLay", "onMessage GetMessage:" + ex.getMessage());
+        Log.d("OverLay", "onMessage stackTraceString:" + stackTraceString);
+    }
     }
 
     private boolean checkOverlayPermission() {
