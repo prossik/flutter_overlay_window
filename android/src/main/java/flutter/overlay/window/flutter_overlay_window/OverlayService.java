@@ -92,16 +92,21 @@ public class OverlayService extends Service implements View.OnTouchListener {
         mResources = getApplicationContext().getResources();
         boolean isCloseWindow = intent.getBooleanExtra(INTENT_EXTRA_IS_CLOSE_WINDOW, false);
         if (isCloseWindow) {
+            Log.d("OverLay", "Service isCloseWindow");
             if (windowManager != null) {
                 windowManager.removeView(flutterView);
                 windowManager = null;
                 flutterView.detachFromFlutterEngine();
                 stopSelf();
+                Log.d("OverLay", "Service isCloseWindow==true windowManager != null stopSelf()");
             }
+          
+
             isRunning = false;
             return START_STICKY;
         }
         if (windowManager != null) {
+            Log.d("OverLay", "Service windowManager != null,stopSelf()");
             windowManager.removeView(flutterView);
             windowManager = null;
             flutterView.detachFromFlutterEngine();
