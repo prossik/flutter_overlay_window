@@ -140,6 +140,13 @@ public class FlutterOverlayWindowPlugin implements
     @Override
     public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
         this.mActivity = binding.getActivity();
+        FlutterEngineGroup enn = new FlutterEngineGroup(context);
+        DartExecutor.DartEntrypoint dEntry = new DartExecutor.DartEntrypoint(
+                FlutterInjector.instance().flutterLoader().findAppBundlePath(),
+                "overlayMain");
+        FlutterEngine engine = enn.createAndRunEngine(context, dEntry);
+        FlutterEngineCache.getInstance().put(OverlayConstants.CACHED_TAG, engine);
+        binding.addActivityResultListener(this);
     }
 
     @Override

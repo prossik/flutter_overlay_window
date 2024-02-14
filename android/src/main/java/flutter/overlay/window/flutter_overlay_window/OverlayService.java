@@ -359,7 +359,15 @@ public class OverlayService extends Service implements View.OnTouchListener {
                 }
             });
         }
+
+      
     }
 
-
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+    Intent restartServiceIntent = new Intent(getApplicationContext(), this.getClass());
+     restartServiceIntent.setPackage(getPackageName());
+    startService(restartServiceIntent);
+    super.onTaskRemoved(rootIntent);
+    }
 }
