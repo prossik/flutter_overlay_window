@@ -108,6 +108,8 @@ public class OverlayService extends Service implements View.OnTouchListener {
         }
         isRunning = true;
         Log.d("OverLay", "Service started");
+        Log.d("OverLay", "FlutterEngineCache.getInstance()" + FlutterEngineCache.getInstance());
+
         FlutterEngine engine = FlutterEngineCache.getInstance().get(OverlayConstants.CACHED_TAG);
         if(engine == null) {
             Log.d("OverLay", "FlutterEngineCache == null");
@@ -117,9 +119,11 @@ public class OverlayService extends Service implements View.OnTouchListener {
             Log.d("OverLay", "new FlutterEngine(this) == null");
         }
         Log.d("OverLay", "engine:" + engine);
+        Log.d("OverLay", "FlutterEngineCache.getInstance().get(OverlayConstants.CACHED_TAG):" + FlutterEngineCache.getInstance().get(OverlayConstants.CACHED_TAG));
+
         engine.getLifecycleChannel().appIsResumed();
         Log.d("OverLay", "engine.getLifecycleChannel():" + engine.getLifecycleChannel());
-        Log.d("OverLay", "engine.getLifecycleChannel().appIsResumed()" + engine.getLifecycleChannel().appIsResumed());
+ 
 
         flutterChannel = new MethodChannel(FlutterEngineCache.getInstance().get(OverlayConstants.CACHED_TAG).getDartExecutor(), OverlayConstants.OVERLAY_TAG);
         overlayMessageChannel = new BasicMessageChannel(FlutterEngineCache.getInstance().get(OverlayConstants.CACHED_TAG).getDartExecutor(), OverlayConstants.MESSENGER_TAG, JSONMessageCodec.INSTANCE);
