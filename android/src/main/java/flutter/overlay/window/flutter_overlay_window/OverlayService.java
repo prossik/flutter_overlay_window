@@ -156,6 +156,8 @@ public class OverlayService extends Service implements View.OnTouchListener {
                     resizeOverlay(width, height, result);
                 }
             });
+            Log.d("OverLay", "OverlayService, overlayMessageChannel:" + overlayMessageChannel.toString());
+
             overlayMessageChannel.setMessageHandler((message, reply) -> {
                 Log.d("OverLay", "data from push notification:" + message);
                 WindowSetup.messenger.send(message);

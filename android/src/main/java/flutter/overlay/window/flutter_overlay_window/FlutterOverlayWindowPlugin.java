@@ -55,6 +55,9 @@ public class FlutterOverlayWindowPlugin implements
 
             WindowSetup.messenger = messenger;
             WindowSetup.messenger.setMessageHandler(this);
+            Log.d("OverLay", "onAttachedToEngine started" );
+            Log.d("OverLay", "onAttachedToEngine messenger:" +messenger.toString() );
+
 
         } catch (Exception ex) {
             StringWriter sw = new StringWriter();
@@ -91,6 +94,8 @@ public class FlutterOverlayWindowPlugin implements
                     result.error("PERMISSION", "overlay permission is not enabled", null);
                     return;
                 }
+                Log.d("OverLay", "FlutterOverlayWindowPlugin showOverlay:" + call.arguments);
+
                 Integer height = call.argument("height");
                 Integer width = call.argument("width");
                 String alignment = call.argument("alignment");
