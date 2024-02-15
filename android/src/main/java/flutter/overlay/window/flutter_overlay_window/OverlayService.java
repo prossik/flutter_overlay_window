@@ -203,7 +203,7 @@ public class OverlayService extends Service implements View.OnTouchListener {
 
         }
 
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
 
