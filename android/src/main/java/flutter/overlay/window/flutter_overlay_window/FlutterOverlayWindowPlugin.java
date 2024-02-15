@@ -40,13 +40,15 @@ public class FlutterOverlayWindowPlugin implements
     private BasicMessageChannel<Object> messenger;
     private Result pendingResult;
     final int REQUEST_CODE_FOR_OVERLAY_PERMISSION = 1248;
+    private FlutterPluginBinding binding;
+
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
         try {
-            if (this.context == null && channel==null && messenger==null) {
+            if (this.binding==null) {
                 this.context = flutterPluginBinding.getApplicationContext();
-
+                binding = flutterPluginBinding;
                 channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), OverlayConstants.CHANNEL_TAG);
                 channel.setMethodCallHandler(this);
 
@@ -157,10 +159,6 @@ public class FlutterOverlayWindowPlugin implements
     @Override
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
         try {
-            final Intent intent = new Intent(context, OverlayService.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            context.startService(intent);
             channel.setMethodCallHandler(null);
             WindowSetup.messenger.setMessageHandler(null);
             Log.d("OverLay", "onDetachedFromEngine run()");
