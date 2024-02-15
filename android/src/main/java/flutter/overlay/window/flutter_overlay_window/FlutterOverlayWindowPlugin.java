@@ -79,66 +79,68 @@ public class FlutterOverlayWindowPlugin implements
             Log.d("OverLay", "onMethodCall, pendingResult:" + pendingResult);
             Log.d("OverLay", "onMethodCall, call.method:" + call.method);
 
-            if (call.method.equals("checkPermission")) {
-                result.success(checkOverlayPermission());
-            } else if (call.method.equals("requestPermission")) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-                    intent.setData(Uri.parse("package:" + mActivity.getPackageName()));
-                    mActivity.startActivityForResult(intent, REQUEST_CODE_FOR_OVERLAY_PERMISSION);
-                } else {
-                    result.success(true);
-                }
-            } else if (call.method.equals("showOverlay")) {
+            switch (call.method) {
+                case "checkPermission":
+                    result.success(checkOverlayPermission());
+                    break;
+                case "requestPermission":
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                        intent.setData(Uri.parse("package:" + mActivity.getPackageName()));
+                        mActivity.startActivityForResult(intent, REQUEST_CODE_FOR_OVERLAY_PERMISSION);
+                    } else {
+                        result.success(true);
+                    }
+                    break;
+                case "showOverlay":
 
-                if (!checkOverlayPermission()) {
-                    result.error("PERMISSION", "overlay permission is not enabled", null);
-                    return;
-                }
-                Log.d("OverLay", "FlutterOverlayWindowPlugin showOverlay:" + call.arguments);
+                    if (!checkOverlayPermission()) {
+                        result.error("PERMISSION", "overlay permission is not enabled", null);
+                        return;
+                    }
+                    Log.d("OverLay", "FlutterOverlayWindowPlugin showOverlay:" + call.arguments);
 
-                Integer height = call.argument("height");
-                Integer width = call.argument("width");
-                String alignment = call.argument("alignment");
-                String flag = call.argument("flag");
-                String overlayTitle = call.argument("overlayTitle");
-                String overlayContent = call.argument("overlayContent");
-                String notificationVisibility = call.argument("notificationVisibility");
-                boolean enableDrag = call.argument("enableDrag");
-                String positionGravity = call.argument("positionGravity");
+                    Integer height = call.argument("height");
+                    Integer width = call.argument("width");
+                    String alignment = call.argument("alignment");
+                    String flag = call.argument("flag");
+                    String overlayTitle = call.argument("overlayTitle");
+                    String overlayContent = call.argument("overlayContent");
+                    String notificationVisibility = call.argument("notificationVisibility");
+                    boolean enableDrag = call.argument("enableDrag");
+                    String positionGravity = call.argument("positionGravity");
 
-                WindowSetup.width = width != null ? width : -1;
-                WindowSetup.height = height != null ? height : -1;
-                WindowSetup.enableDrag = enableDrag;
-                WindowSetup.setGravityFromAlignment(alignment != null ? alignment : "center");
-                WindowSetup.setFlag(flag != null ? flag : "flagNotFocusable");
-                WindowSetup.overlayTitle = overlayTitle;
-                WindowSetup.overlayContent = overlayContent == null ? "" : overlayContent;
-                WindowSetup.positionGravity = positionGravity;
-                WindowSetup.setNotificationVisibility(notificationVisibility);
+                    WindowSetup.width = width != null ? width : -1;
+                    WindowSetup.height = height != null ? height : -1;
+                    WindowSetup.enableDrag = enableDrag;
+                    WindowSetup.setGravityFromAlignment(alignment != null ? alignment : "center");
+                    WindowSetup.setFlag(flag != null ? flag : "flagNotFocusable");
+                    WindowSetup.overlayTitle = overlayTitle;
+                    WindowSetup.overlayContent = overlayContent == null ? "" : overlayContent;
+                    WindowSetup.positionGravity = positionGravity;
+                    WindowSetup.setNotificationVisibility(notificationVisibility);
 
-                final Intent intent = new Intent(context, OverlayService.class);
-                if(OverlayService.isRunning) {
+                    final Intent intent = new Intent(context, OverlayService.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     context.startService(intent);
-                }
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                context.startService(intent);
-                result.success(null);
+                    result.success(null);
 
-            } else if (call.method.equals("isOverlayActive")) {
-                result.success(OverlayService.isRunning);
-                return;
-            } else if (call.method.equals("closeOverlay")) {
-                if (OverlayService.isRunning) {
-                    final Intent i = new Intent(context, OverlayService.class);
-                    i.putExtra(OverlayService.INTENT_EXTRA_IS_CLOSE_WINDOW, true);
-                    context.startService(i);
-                    result.success(true);
-                }
-                return;
-            } else {
-                result.notImplemented();
+                    break;
+                case "isOverlayActive":
+                    result.success(OverlayService.isRunning);
+                    return;
+                case "closeOverlay":
+                    if (OverlayService.isRunning) {
+                        final Intent i = new Intent(context, OverlayService.class);
+                        i.putExtra(OverlayService.INTENT_EXTRA_IS_CLOSE_WINDOW, true);
+                        context.startService(i);
+                        result.success(true);
+                    }
+                    return;
+                default:
+                    result.notImplemented();
+                    break;
             }
         } catch (Exception ex) {
             StringWriter sw = new StringWriter();
@@ -155,6 +157,10 @@ public class FlutterOverlayWindowPlugin implements
     @Override
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
         try {
+            final Intent intent = new Intent(context, OverlayService.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            context.startService(intent);
             channel.setMethodCallHandler(null);
             WindowSetup.messenger.setMessageHandler(null);
             Log.d("OverLay", "onDetachedFromEngine run()");
