@@ -152,7 +152,6 @@ public class FlutterOverlayWindowPlugin implements
     @Override
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
         try {
-            this.context = null;
             channel.setMethodCallHandler(null);
             WindowSetup.messenger.setMessageHandler(null);
             WindowSetup.messenger = null;
