@@ -44,7 +44,7 @@ public class FlutterOverlayWindowPlugin implements
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
         try {
-            if (this.context == null) {
+            if (this.context == null && channel==null && messenger==null) {
                 this.context = flutterPluginBinding.getApplicationContext();
 
                 channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), OverlayConstants.CHANNEL_TAG);
@@ -118,6 +118,9 @@ public class FlutterOverlayWindowPlugin implements
                 WindowSetup.setNotificationVisibility(notificationVisibility);
 
                 final Intent intent = new Intent(context, OverlayService.class);
+                if(OverlayService.isRunning) {
+                    context.startService(intent);
+                }
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 context.startService(intent);
@@ -154,8 +157,6 @@ public class FlutterOverlayWindowPlugin implements
         try {
             channel.setMethodCallHandler(null);
             WindowSetup.messenger.setMessageHandler(null);
-            WindowSetup.messenger = null;
-            channel = null;
             Log.d("OverLay", "onDetachedFromEngine run()");
         } catch (Exception ex) {
             StringWriter sw = new StringWriter();
