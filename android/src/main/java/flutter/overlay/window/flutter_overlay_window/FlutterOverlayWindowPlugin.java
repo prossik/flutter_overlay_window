@@ -44,21 +44,22 @@ public class FlutterOverlayWindowPlugin implements
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
         try {
+            if (this.context == null) {
+                this.context = flutterPluginBinding.getApplicationContext();
 
-            this.context = flutterPluginBinding.getApplicationContext();
-            channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), OverlayConstants.CHANNEL_TAG);
-            channel.setMethodCallHandler(this);
+                channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), OverlayConstants.CHANNEL_TAG);
+                channel.setMethodCallHandler(this);
 
-            messenger = new BasicMessageChannel(flutterPluginBinding.getBinaryMessenger(), OverlayConstants.MESSENGER_TAG,
-                    JSONMessageCodec.INSTANCE);
-            messenger.setMessageHandler(this);
+                messenger = new BasicMessageChannel(flutterPluginBinding.getBinaryMessenger(), OverlayConstants.MESSENGER_TAG,
+                        JSONMessageCodec.INSTANCE);
+                messenger.setMessageHandler(this);
 
-            WindowSetup.messenger = messenger;
-            WindowSetup.messenger.setMessageHandler(this);
-            Log.d("OverLay", "onAttachedToEngine started" );
-            Log.d("OverLay", "onAttachedToEngine messenger:" +messenger.toString() );
+                WindowSetup.messenger = messenger;
+                WindowSetup.messenger.setMessageHandler(this);
+                Log.d("OverLay", "onAttachedToEngine started");
+                Log.d("OverLay", "onAttachedToEngine messenger:" + messenger.toString());
 
-
+            }
         } catch (Exception ex) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
@@ -151,9 +152,11 @@ public class FlutterOverlayWindowPlugin implements
     @Override
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
         try {
-
+            this.context = null;
             channel.setMethodCallHandler(null);
             WindowSetup.messenger.setMessageHandler(null);
+            WindowSetup.messenger = null;
+            channel = null;
             Log.d("OverLay", "onDetachedFromEngine run()");
         } catch (Exception ex) {
             StringWriter sw = new StringWriter();
